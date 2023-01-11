@@ -1,0 +1,28 @@
+﻿@using BookStore.Models
+@model AutherDetails
+
+@{
+    ViewData["Title"] = Model.AutherName;
+    Layout = "_CustomLayout";
+}
+
+<div class="row justify-content-center mt-60-px" style="margin-top: 85px; margin-bottom: 70px;">
+
+    <div class="row justify-content-center mt-60-px">
+        <h3>@Model.AutherName</h3>
+        <div>
+            <span class="mt-2">
+                <i class="bi bi-currency-dollar text-warning"></i>
+                <span class="text-muted"> Total Books Price  =  @Model.TotalBooksPrice</span>
+            </span>
+        </div>
+        <div>
+            <span class="mt-2">
+                <i class="bi bi-book text-warning"></i>
+                <span class="text-muted">Total Books Count  =  @Model.TotalBooksCount</span>
+            </span>
+        </div>
+
+    </div>
+
+</div>

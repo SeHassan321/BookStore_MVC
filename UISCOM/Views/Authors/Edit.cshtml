@@ -1,0 +1,37 @@
+﻿@using BookStore.Models
+@model Author
+
+@{
+    ViewData["Title"] = "Book Form";
+    Layout = "_CustomLayout";
+}
+
+<div class="container mt-5 " style="margin-top: 100px">
+    <h2>Edit Author</h2>
+    <hr />
+
+    <section class="row justify-content-between">
+        <div class="col-md-4">
+            <form method="POST" asp-action="Edit" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label class="text-muted" asp-for="Name"></label>
+                    <input type="text" class="form-control" asp-for="Name" maxlength="250" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4">
+                    <i class="bi bi-check"></i>
+                    Save
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary mt-4">
+                    <i class="bi bi-x"></i>
+                    Cancel
+                </a>
+            </form>
+    </section>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

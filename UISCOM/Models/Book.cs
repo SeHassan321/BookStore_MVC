@@ -11,7 +11,7 @@ namespace BookStore.Models
 
         [Required, MaxLength(250)]
         public string Title { get; set; }
-        public List< AuthorBook> AuthorBooks { get; set; }
+        public List<AuthorBook> AuthorBooks { get; set; }
         public double Rate { get; set; }
 
         [Required, MaxLength(2500)]

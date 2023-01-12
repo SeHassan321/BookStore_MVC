@@ -29,9 +29,14 @@ namespace UISCOM.Controllers
 
        
         public async Task<IActionResult> FindByAny(string? searchItem)
-        {          
-            var books = await _context.Books.Where(b => b.Author.Name.Contains( searchItem) || b.Title.Contains(searchItem) || b.Category.Name.Contains(searchItem)).ToListAsync();
-            return View("Index",books);
+        {
+            bool result = double.TryParse(searchItem, out double priceOrRate);
+            List<Book> books = null;
+            if (result)
+                books = await _context.Books.Where(b => b.Price == (int)priceOrRate||b.Rate==priceOrRate).ToListAsync();
+            else
+                books = await _context.Books.Where(b => b.Author.Name.Contains( searchItem) || b.Title.Contains(searchItem) || b.Category.Name.Contains(searchItem)).ToListAsync();
+            return View("Index", books);
         }
 
         public async Task<IActionResult> Create()

@@ -69,7 +69,7 @@ namespace UISCOM.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AutherId")
+                    b.Property<int?>("AutherId")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -147,9 +147,7 @@ namespace UISCOM.Migrations
                 {
                     b.HasOne("BookStore.Models.Author", "Author")
                         .WithMany("Books")
-                        .HasForeignKey("AutherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AutherId");
 
                     b.HasOne("BookStore.Models.Category", "Category")
                         .WithMany("Books")

@@ -30,7 +30,7 @@ namespace UISCOM.ViewModels
         public IEnumerable<Category> Categories { get; set; }
 
         [Display(Name = "Auther")]
-        public int AutherId { get; set; }
+        public List<int> AutherIds { get; set; }
 
         public IEnumerable<Author> Authors { get; set; }
     }

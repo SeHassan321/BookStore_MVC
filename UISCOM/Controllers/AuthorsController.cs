@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BookStore.Models;
 using UISCOM.Models;
 using UISCOM.ViewModels;
+using System.Runtime.Intrinsics.Arm;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace UISCOM.Controllers
 {
@@ -26,6 +28,8 @@ namespace UISCOM.Controllers
             return View(await _context.Authers.ToListAsync());
         }
 
+
+
         // GET: Authors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -35,16 +39,32 @@ namespace UISCOM.Controllers
             var auhtor = await _context.Authers.SingleOrDefaultAsync(m => m.Id == id);
 
             if (auhtor == null)
-                return NotFound();
+                return NotFound("no author found");
 
-            var autherDetails = new AutherDetails()
-            {
-                AutherName = auhtor.Name,
-                TotalBooksCount = await _context.Books.CountAsync(a => a.AutherId == id),
-                TotalBooksPrice= await _context.Books.Where(a => a.AutherId == id).SumAsync(i => i.Price)
-            };
+            var result = from a in _context.Authers
+                         join ab in _context.AuthorBooks
+                         on a.Id equals ab.AuthorId
+                         join b in _context.Books
+                         on ab.BookId equals b.Id
+                         where a.Id == id
+                         group new { a, b } by a.Name into g
+                         select new { Name = g.Key, CountOfBooks = g.Count(), TotalPrice = g.Sum(g => g.b.Price) };
+
+            var autherDetails = new AutherDetails();
+
+            if (result != null)
+                foreach (var item in result)
+                {
+                    {
+                        autherDetails.AutherName = item.Name;
+                        autherDetails.TotalBooksCount = item.CountOfBooks;
+                        autherDetails.TotalBooksPrice = item.TotalPrice;
+                    };
+                    return View(autherDetails);
+                }
 
             return View(autherDetails);
+
         }
 
         // GET: Authors/Create

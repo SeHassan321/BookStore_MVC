@@ -38,11 +38,20 @@
                     Category :   @Model.Category.Name
                 </span>
             </div>
-            <div>
+            <div class="">
                 <span class="text-muted">
                     <i class="bi bi-person"></i>
-                    Auther Name :  @Model.Author.Name
+                    Auther Name :
                 </span>
+                <div class="d-inline">
+                @{
+                    var authors = Model.AuthorBooks.Select(ab => ab.Author.Name).ToList();
+                    foreach (var author in authors)
+                    {
+                            <i class="bi bi-person">@author</i>
+                    }
+                }
+                </div>
             </div>
         </div>
         <p class="text-justify mt-3"> @Model.Storeline</p>

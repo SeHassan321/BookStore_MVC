@@ -10,7 +10,7 @@ namespace UISCOM.Controllers
 {
     public class BooksController : Controller
     {
-        private new List<string> _allowedExtenstions = new List<string> { ".jpg", ".png" };
+        private  List<string> _allowedExtenstions = new List<string> { ".jpg", ".png" };
         private long _maxAllowedPosterSize = 1048576;
         private readonly ApplicationDbContext _context;
         private readonly IToastNotification _toastNotification;
@@ -27,15 +27,15 @@ namespace UISCOM.Controllers
             return View(books);
         }
 
-       
+
         public async Task<IActionResult> FindByAny(string? searchItem)
         {
             bool result = double.TryParse(searchItem, out double priceOrRate);
             List<Book> books = null;
             if (result)
-                books = await _context.Books.Where(b => b.Price == (int)priceOrRate||b.Rate==priceOrRate).ToListAsync();
+                books = await _context.Books.Where(b => b.Price == (int)priceOrRate || b.Rate == priceOrRate).ToListAsync();
             else
-                books = await _context.Books.Where(b => b.Author.Name.Contains( searchItem) || b.Title.Contains(searchItem) || b.Category.Name.Contains(searchItem)).ToListAsync();
+                books = await _context.Books.Where(b => b.Title.Contains(searchItem) || b.Category.Name.Contains(searchItem)).ToListAsync();
             return View("Index", books);
         }
 
@@ -94,19 +94,30 @@ namespace UISCOM.Controllers
 
             await poster.CopyToAsync(dataStream);
 
-            var books = new Book
+
+            Book book = new Book
             {
                 Title = model.Title,
                 CategoryId = model.CategoryId,
-                AutherId = model.AutherId,
                 Year = model.Year,
                 Rate = model.Rate,
                 Price = model.Price,
                 Storeline = model.Storeline,
-                Poster = dataStream.ToArray()
+                Poster = dataStream.ToArray(),
             };
 
-            _context.Books.Add(books);
+            foreach (var item in model.AutherIds)
+            {
+                var auhtor = await _context.Authers.FindAsync(item);
+                AuthorBook authorBooks = new AuthorBook()
+                {
+                    Author = auhtor,
+                    Book = book
+                };
+                _context.AuthorBooks.Add(authorBooks);
+
+            }
+            _context.Books.Add(book);
             _context.SaveChanges();
 
             _toastNotification.AddSuccessToastMessage("Book created successfully");
@@ -129,7 +140,6 @@ namespace UISCOM.Controllers
                 Id = book.Id,
                 Title = book.Title,
                 CategoryId = book.CategoryId,
-                AutherId = book.AutherId,
                 Rate = book.Rate,
                 Price = book.Price,
                 Year = book.Year,
@@ -137,7 +147,6 @@ namespace UISCOM.Controllers
                 Poster = book.Poster,
                 Categories = await _context.Categories.OrderBy(m => m.Name).ToListAsync(),
                 Authors = await _context.Authers.OrderBy(m => m.Name).ToListAsync()
-
             };
 
             return View("BookForm", viewModel);
@@ -193,7 +202,6 @@ namespace UISCOM.Controllers
 
             book.Title = model.Title;
             book.CategoryId = model.CategoryId;
-            book.AutherId = model.AutherId;
             book.Year = model.Year;
             book.Rate = model.Rate;
             book.Price = model.Price;
@@ -212,7 +220,7 @@ namespace UISCOM.Controllers
             if (id == null)
                 return BadRequest();
 
-            var book = await _context.Books.Include(b => b.Category).Include(b=>b.Author).SingleOrDefaultAsync(m => m.Id == id);
+            var book = await _context.Books.Include(b => b.Category).Include(b=>b.AuthorBooks).ThenInclude(ab=>ab.Author).SingleOrDefaultAsync(m => m.Id == id);
 
             if (book == null)
                 return NotFound();
@@ -235,6 +243,5 @@ namespace UISCOM.Controllers
 
             return Ok();
         }
-
     }
 }

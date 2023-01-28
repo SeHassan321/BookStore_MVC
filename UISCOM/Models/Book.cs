@@ -22,10 +22,6 @@ namespace BookStore.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
-
-        [ForeignKey("Author")]
-        public int? AutherId { get; set; }
-        public Author? Author { get; set; }
         public byte[] Poster { get; set; }
     }
 

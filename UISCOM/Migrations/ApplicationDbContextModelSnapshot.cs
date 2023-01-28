@@ -69,9 +69,6 @@ namespace UISCOM.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("AutherId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -98,8 +95,6 @@ namespace UISCOM.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AutherId");
 
                     b.HasIndex("CategoryId");
 
@@ -145,17 +140,11 @@ namespace UISCOM.Migrations
 
             modelBuilder.Entity("BookStore.Models.Book", b =>
                 {
-                    b.HasOne("BookStore.Models.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AutherId");
-
                     b.HasOne("BookStore.Models.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("Category");
                 });
@@ -163,8 +152,6 @@ namespace UISCOM.Migrations
             modelBuilder.Entity("BookStore.Models.Author", b =>
                 {
                     b.Navigation("AuthorBook");
-
-                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("BookStore.Models.Book", b =>
